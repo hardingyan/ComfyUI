@@ -1532,7 +1532,10 @@ class KSampler:
     DESCRIPTION = "Uses the provided model, positive and negative conditioning to denoise the latent image."
 
     def sample(self, model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent_image, denoise=1.0):
-        return common_ksampler(model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent_image, denoise=denoise)
+
+        ret = common_ksampler(model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent_image, denoise=denoise)
+
+        return ret
 
 class KSamplerAdvanced:
     @classmethod

@@ -44,6 +44,9 @@ from . import utils
 import comfy.latent_formats
 import math
 from typing import TYPE_CHECKING
+
+import torch_tensorrt
+
 if TYPE_CHECKING:
     from comfy.model_patcher import ModelPatcher
 
@@ -159,7 +162,19 @@ class BaseModel(torch.nn.Module):
                     extra = extra.to(dtype)
             extra_conds[o] = extra
 
+        import time
+
+        torch.cuda.synchronize()
+        start_time = time.time()
+
         model_output = self.diffusion_model(xc, t, context=context, control=control, transformer_options=transformer_options, **extra_conds).float()
+
+        torch.cuda.synchronize()
+        end_time = time.time()
+
+        inference_time = end_time - start_time
+        print(f"diffusion_model, execute time: {inference_time:.6f} s")
+
         return self.model_sampling.calculate_denoised(sigma, model_output, x)
 
     def get_dtype(self):

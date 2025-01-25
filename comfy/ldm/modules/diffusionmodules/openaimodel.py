@@ -834,7 +834,27 @@ class UNetModel(nn.Module):
             comfy.patcher_extension.get_all_wrappers(comfy.patcher_extension.WrappersMP.DIFFUSION_MODEL, transformer_options)
         ).execute(x, timesteps, context, y, control, transformer_options, **kwargs)
 
+    @th.compile(mode="max-autotune-no-cudagraphs")
     def _forward(self, x, timesteps=None, context=None, y=None, control=None, transformer_options={}, **kwargs):
+        # print(f"[DEBUG] x {x.shape} {x.dtype}")
+        # print(f"[DEBUG] timesteps {timesteps.shape} {timesteps.dtype}")
+        # print(f"[DEBUG] context {context.shape} {context.dtype}")
+        # print(f"[DEBUG] y {y.shape} {y.dtype}")
+        # print(f"[DEBUG] control")
+        # for lst_name, lst in control.items() :
+        #     if lst_name == 'input':
+        #         assert(len(lst) == 0)
+        #         print(f"\t{lst_name} : []")
+        #     elif lst_name == 'middle':
+        #         assert(len(lst) == 1)
+        #         print(f"\t{lst_name}[0] : {lst[0].shape}, {lst[0].dtype}")
+        #     elif lst_name == 'output':
+        #         assert(len(lst) == 9)
+        #         for o0 in range(9):
+        #             print(f"\t{lst_name}[{o0}] : {lst[o0].shape}, {lst[o0].dtype}")
+        # print(f"[DEBUG] transformer_options.keys() {transformer_options.keys()}")
+        # print(f"[DEBUG] transformer_options["patches_replace"] {transformer_options["patches_replace"]}")
+        # print(f"[DEBUG] kwargs {kwargs}")
         """
         Apply the model to an input batch.
         :param x: an [N x C x ...] Tensor of inputs.

@@ -270,7 +270,17 @@ class ControlNet(ControlBase):
         timestep = self.model_sampling_current.timestep(t)
         x_noisy = self.model_sampling_current.calculate_input(t, x_noisy)
 
+        import time
+
+        torch.cuda.synchronize()
+        time_point_0 = time.time()
+
         control = self.control_model(x=x_noisy.to(dtype), hint=self.cond_hint, timesteps=timestep.to(dtype), context=context.to(dtype), **extra)
+
+        torch.cuda.synchronize()
+        time_0 = time.time() - time_point_0
+        print(f"self.control_model, time: {time_0:.6f} s")
+
         return self.control_merge(control, control_prev, output_dtype=None)
 
     def copy(self):

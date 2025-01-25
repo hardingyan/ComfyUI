@@ -194,6 +194,7 @@ def calc_cond_batch(model: 'BaseModel', conds: list[list[dict]], x_in: torch.Ten
     )
     return executor.execute(model, conds, x_in, timestep, model_options)
 
+# This function, call controlnet and unet
 def _calc_cond_batch(model: 'BaseModel', conds: list[list[dict]], x_in: torch.Tensor, timestep, model_options):
     out_conds = []
     out_counts = []

@@ -501,7 +501,18 @@ class PromptExecutor:
                     self.handle_execution_error(prompt_id, dynamic_prompt.original_prompt, current_outputs, executed, error, ex)
                     break
 
+                torch.cuda.synchronize()
+                start_time = time.time()
+
                 result, error, ex = execute(self.server, dynamic_prompt, self.caches, node_id, extra_data, executed, prompt_id, execution_list, pending_subgraph_results)
+
+                torch.cuda.synchronize()
+                end_time = time.time()
+
+                inference_time = end_time - start_time
+                class_type = dynamic_prompt.get_node(node_id)['class_type']
+                print(f"node {node_id:<4}, {class_type:<30}, execute time: {inference_time:.6f} s")
+
                 self.success = result != ExecutionResult.FAILURE
                 if result == ExecutionResult.FAILURE:
                     self.handle_execution_error(prompt_id, dynamic_prompt.original_prompt, current_outputs, executed, error, ex)

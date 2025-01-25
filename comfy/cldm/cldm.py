@@ -380,6 +380,7 @@ class ControlNet(nn.Module):
     def make_zero_conv(self, channels, operations=None, dtype=None, device=None):
         return TimestepEmbedSequential(operations.conv_nd(self.dims, channels, channels, 1, padding=0, dtype=dtype, device=device))
 
+    @torch.compile(mode="max-autotune-no-cudagraphs")
     def forward(self, x, hint, timesteps, context, y=None, **kwargs):
         t_emb = timestep_embedding(timesteps, self.model_channels, repeat_only=False).to(x.dtype)
         emb = self.time_embed(t_emb)
